@@ -16,7 +16,7 @@
 #define KC_M_L KC_MS_L
 #define KC_M_R KC_MS_R
 //Layers
-#define L_QUERTY 0 //default
+#define L_COMMON 0 //default
 #define L_NAVI 1 // mouse and cursor
 #define L_SYMB 2 // symbols
 #define L_CONFIG 3 // config mode
@@ -138,7 +138,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                 |      |      |      |       |      |      |      |
  *                                 `--------------------'       `--------------------'
  */
-[L_CONF] = KEYMAP(
+[L_CONFIG] = KEYMAP(
   // left hand
   RESET,        _______,_______,_______,    _______,    _______,    _______,
   TO(L_QWDR),   _______,    _______,    _______,    _______,    _______,    _______,
@@ -164,128 +164,40 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-void persistant_default_layer_set(uint16_t default_layer) {
-  eeconfig_update_default_layer(default_layer);
-  default_layer_set(default_layer);
-}
-
-void switch_layer (uint8_t layer, bool on) {
-  if (on) {
-    layer_on(layer);
-  } else {
-    layer_off(layer);
-  }
-};
-
-void type_code(uint8_t keycode){
-  register_code (keycode);
-  unregister_code (keycode);
-};
-
-void set_eisu(void){
-  type_code (KC_MHEN);
-  type_code (KC_LANG2);
-};
-
-void set_kana(void){
-  type_code (KC_HENK);
-  type_code (KC_LANG1);
-};
-
-bool is_tap (keyrecord_t *record) {
-  return hold_timers[record->event.key.row][record->event.key.col]
-  && timer_elapsed (hold_timers[record->event.key.row][record->event.key.col]) < TAPPING_TERM;
-}
-
-void mod_tap_action(keyrecord_t *record, uint8_t mod, void (*cb)(void) ) {
-  if (record->event.pressed) {
-    add_mods(MOD_BIT(mod));
-  } else {
-    if (is_tap(record)) {
-      del_mods(MOD_BIT(mod));
-      cb();
-    } else {
-      unregister_code(mod);
-    }
-  }
-}
-
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  // record pressed timer
-  if (record->event.pressed) {
-    hold_timers[record->event.key.row][record->event.key.col] = timer_read();
-  }
-
-  switch (keycode) {
-    //--layers--
-
-    //layout
-    case CK_GAME:
-      if (record->event.pressed) {
-        layer_move(L_QWERTY);
-        layer_on(L_GAME);
-      }
-      return false;
-      break;
-
-    case CK_LNAV2:
-      if (record->event.pressed) {
-        layer_on(L_LNAV2);
-      } else {
-        layer_off(L_LNAV2);
-        if (is_tap(record)) {
-          mousekey_on(KC_M_B1);
-          mousekey_send();
-          mousekey_off(KC_M_B1);
-          mousekey_send();
-        }
-      }
-      return false;
-      break;
-
-    //os
-    case CK_MAC:
-      if (record->event.pressed) {
-        persistant_default_layer_set(1UL<<L_MAC);
-      }
-      return false;
-      break;
-    case CK_WIN:
-      if (record->event.pressed) {
-        persistant_default_layer_set(1UL<<L_WIN);
-      }
-      return false;
-      break;
-
-    // langs
-    case CK_A_EN:
-      mod_tap_action(record, KC_LALT, set_eisu);
-      return false;
-      break;
-    case CK_C_JA:
-      mod_tap_action(record, KC_RCTL, set_kana);
-      return false;
-      break;
-
-    // Ctrl-Q -> Alt-F4
-    case KC_Q:
-      if (
-        record->event.pressed
-        && (get_mods() & MOD_CTLS)
-      ) {
-        clear_keyboard();
-        add_mods(MOD_BIT(KC_LALT));
-        type_code(KC_F4);
-        del_mods(MOD_BIT(KC_LALT));
-        return false;
-      }
-      break;
-  }
-  return true;
-}
-
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
-  persistant_default_layer_set(1UL<<L_MAC);
-  layer_move(L_QWDR);
+
 };
+
+// Runs constantly in the background, in a loop.
+void matrix_scan_user(void) {
+    uint8_t layer = biton32(layer_state);
+
+    ergodox_board_led_off();
+    ergodox_right_led_1_off();
+    ergodox_right_led_2_off();
+    ergodox_right_led_3_off();
+    switch (layer) {
+        case L_COMMON:
+            // Binary 1 represented by the leds
+            // --*
+            ergodox_right_led_1_on();
+            break;
+        case LNAV:
+            // Binary 2 represented by the leds
+            // -*-
+            ergodox_right_led_2_on();
+            break;
+        case L_CONFIG:
+            // Binary 3 represented by the leds
+            // -**
+            ergodox_right_led_1_on();
+            ergodox_right_led_2_on();
+            break;
+        default:
+            // none
+            break;
+    }
+};
+
+
