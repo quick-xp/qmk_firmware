@@ -11,13 +11,31 @@
 #define K_KANA KC_LANG1
 #define _______ KC_TRNS // 仮想レイヤーのキー引き継ぎ
 #define XXXXXXX KC_NO // 何もしない
+
+#define C(kc) LCTL(kc)
+#define A(kc) LALT(kc)
+#define SC(kc) (S(C(kc)))
+#define SA(kc) (S(A(kc)))
+#define KC_M_WU KC_MS_WH_UP
+#define KC_M_WD KC_MS_WH_DOWN
+#define KC_M_WL KC_MS_WH_LEFT
+#define KC_M_WR KC_MS_WH_RIGHT
 #define KC_M_U KC_MS_U
 #define KC_M_D KC_MS_D
 #define KC_M_L KC_MS_L
 #define KC_M_R KC_MS_R
+#define KC_M_A0 KC_MS_ACCEL0
+#define KC_M_A1 KC_MS_ACCEL1
+#define KC_M_A2 KC_MS_ACCEL2
+#define KC_M_B1 KC_MS_BTN1
+#define KC_M_B2 KC_MS_BTN2
+#define KC_M_B3 KC_MS_BTN3
+#define KC_NEXT C(KC_TAB)
+#define KC_PREV SC(KC_TAB)
+#define MOD_CTLS (MOD_BIT(KC_LCTRL) | MOD_BIT(KC_RCTRL))
 //Layers
 #define L_COMMON 0 //default
-#define L_NAVI 1 // mouse and cursor
+#define L_NAV 1 // mouse and cursor
 #define L_SYMB 2 // symbols
 #define L_CONFIG 3 // config mode
 
@@ -106,7 +124,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_M_B1,    KC_M_B2,    _______,
 
   //righthand
-  KC_F12,     KC_F6,      KC_F7,      KC_F8,      KC_F9,      KC_F10,     MO(L_CONF),
+  KC_F12,     KC_F6,      KC_F7,      KC_F8,      KC_F9,      KC_F10,     MO(L_CONFIG),
   KC_GT,      KC_HOME,    KC_PGUP,    KC_UP,      KC_PGDN,    _______,    _______,
               KC_END,     KC_LEFT,    KC_DOWN,    KC_RIGHT,   KC_COLN,    KC_M_A0,
   KC_SLSH,    KC_CIRC,    KC_AMPR,    KC_ASTR,    KC_LPRN,    KC_RPRN,    KC_M_A0,
@@ -122,7 +140,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,--------------------------------------------------.           ,--------------------------------------------------.
  * |  RESET |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
  * |--------+------+------+------+------+-------------|           |------+------+------+------+------+------+--------|
- * |  QWRT  |      |      |      |      |      |      |           |      |      |      |      |      |      |        |
+ * |  COMMON|      |      |      |      |      |      |           |      |      |      |      |      |      |        |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |        |      |      |      |      |      |------|           |------|      |      |      |      |      |        |
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
@@ -141,7 +159,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [L_CONFIG] = KEYMAP(
   // left hand
   RESET,        _______,_______,_______,    _______,    _______,    _______,
-  TO(L_QWDR),   _______,    _______,    _______,    _______,    _______,    _______,
+  TO(L_COMMON),   _______,    _______,    _______,    _______,    _______,    _______,
   _______,  _______,    _______,    _______,    _______,    _______,
   _______,      _______,    _______,    _______,    _______,    _______,    _______,
   _______,      _______,    _______,    _______,    _______,
@@ -183,7 +201,7 @@ void matrix_scan_user(void) {
             // --*
             ergodox_right_led_1_on();
             break;
-        case LNAV:
+        case L_NAV:
             // Binary 2 represented by the leds
             // -*-
             ergodox_right_led_2_on();
