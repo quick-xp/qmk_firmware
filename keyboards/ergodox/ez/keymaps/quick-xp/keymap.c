@@ -59,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                        |      |      |       |      |        |
  *                                 ,------|------|------|       |------+--------+------.
  *                                 |      |      |      |       |      |        |      |
- *                                 |Space | ESC  |------|       |------|  ENTER | Space|
+ *                                 |Space | EISU |------|       |------|  KANA  | Space|
  *                                 |      |      | DEL  |       | BS   |        | /NAV |
  *                                 `--------------------'       `----------------------'
  */
@@ -75,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
               _______,    _______,
                           _______,
-  KC_SPC,      KC_ESC,    KC_DEL,
+  KC_SPC,      K_EISU,    KC_DEL,
 
 
   //righthand
@@ -87,7 +87,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   _______,    _______,
   _______,
-  KC_BSPC,    KC_ENT,    LT(L_NAV,KC_SPC)
+  KC_BSPC,    K_KANA,    LT(L_NAV,KC_SPC)
 ),
 
 /* Keymap: Cursor, Mouse Layer
